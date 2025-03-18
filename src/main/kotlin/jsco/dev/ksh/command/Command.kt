@@ -34,11 +34,11 @@ abstract class Command(
     companion object {
         @JvmStatic protected fun singleSuccess(): Int = 1
 
-        fun info(message: String?) {
+        fun log(message: String?) {
             CommandManager.log(Text.empty().append(message))
         }
 
-        fun info (message: MutableText) {
+        fun log(message: MutableText) {
             CommandManager.log(message)
         }
     }

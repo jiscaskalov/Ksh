@@ -21,14 +21,13 @@ package jsco.dev.ksh.command.impl
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import jsco.dev.ksh.command.Command
-import jsco.dev.ksh.command.CommandManager
 import net.minecraft.command.CommandSource
 
 class EchoCommand : Command("echo") {
 
     override fun build(builder: LiteralArgumentBuilder<CommandSource>) {
         builder.then(argument("message", StringArgumentType.greedyString()).executes{
-            CommandManager.log(it.getArgument("message", String::class.java))
+            log(it.getArgument("message", String::class.java))
             singleSuccess()
         })
     }

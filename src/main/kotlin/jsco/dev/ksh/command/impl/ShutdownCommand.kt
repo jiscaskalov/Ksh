@@ -21,7 +21,6 @@ package jsco.dev.ksh.command.impl
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import jsco.dev.ksh.Ksh
 import jsco.dev.ksh.command.Command
-import jsco.dev.ksh.command.CommandManager
 import net.minecraft.command.CommandSource
 
 class ShutdownCommand : Command("shutdown") {

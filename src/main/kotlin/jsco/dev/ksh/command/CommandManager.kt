@@ -61,10 +61,6 @@ object CommandManager {
         dispatcher.execute(results)
     }
 
-    fun log(msg: String) {
-        log(Text.of(msg).copy())
-    }
-
     fun log(msg: MutableText) {
         (Ksh.client.currentScreen as? TerminalScreen)?.apply {
             log(msg)

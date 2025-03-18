@@ -21,14 +21,13 @@ package jsco.dev.ksh.command.impl
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import jsco.dev.ksh.Ksh
 import jsco.dev.ksh.command.Command
-import jsco.dev.ksh.command.CommandManager
 import net.minecraft.command.CommandSource
 
 class WhoAmICommand : Command("whoami") {
 
     override fun build(builder: LiteralArgumentBuilder<CommandSource>) {
         builder.executes {
-            CommandManager.log(Ksh.client.player?.nameForScoreboard!!)
+            log(Ksh.client.player?.nameForScoreboard!!)
             singleSuccess()
         }
     }
