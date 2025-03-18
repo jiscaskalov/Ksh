@@ -19,47 +19,66 @@
 package jsco.dev.ksh.gui
 
 import jsco.dev.ksh.Ksh
-import jsco.dev.ksh.util.SharedVariables
+import jsco.dev.ksh.command.CommandManager
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.TextFieldWidget
-import net.minecraft.text.Style
+import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import java.awt.Color
+import kotlin.properties.Delegates
 
 class TerminalScreen : Screen(Text.of("ksh")) {
 
-    private lateinit var textField: TextFieldWidget
-
-    private val prefix: Text = Text.of("[").copy().setStyle(Style.EMPTY.withColor(SharedVariables.BRAND_BACKGROUND.rgb))
-    private val brand: Text = Text.of("@ksh").copy().setStyle(Style.EMPTY.withColor(SharedVariables.BRAND_COLOR.rgb))
-    private val suffix: Text = Text.of(" ~]$ ").copy().setStyle(Style.EMPTY.withColor(SharedVariables.BRAND_BACKGROUND.rgb))
+    lateinit var textField: TextFieldWidget
     private lateinit var prompt: Text
+    private var textBgColor by Delegates.notNull<Int>()
+
+    var logs: MutableList<Pair<MutableText, Int>> = mutableListOf()
+    private var currentLogY = 3
+    private var inputY = 8
 
     override fun init() {
-        val username = Text.of(Ksh.client.player?.nameForScoreboard?.lowercase()).copy().setStyle(Style.EMPTY.withColor(SharedVariables.BRAND_COLOR.rgb))
-        this.prompt = Text.empty()
-            .append(prefix)
-            .append(username)
-            .append(brand)
-            .append(suffix)
+        this.prompt = CommandManager.getPrompt()
+        val promptWidth = Ksh.client.textRenderer.getWidth(prompt)
 
-        this.textField = TextFieldWidget(Ksh.client.textRenderer, Ksh.client.textRenderer.getWidth(prompt) + 6, 8, this.width - 6, 14, Text.empty())
-        this.textField.setDrawsBackground(false)
-        this.textField.setFocusUnlocked(false)
+        this.textBgColor = client?.options?.getTextBackgroundColor(Int.MIN_VALUE) ?: Color.BLACK.rgb
+        this.textField = TextFieldWidget(Ksh.client.textRenderer, promptWidth + 6, inputY, this.width - 6, 14, Text.empty()).apply {
+            setDrawsBackground(false)
+            setFocusUnlocked(false)
+        }
         this.addSelectableChild(textField)
     }
 
     override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, delta: Float) {
-        context!!.fill(2, 4, this.width - 2, this.height - 4, client!!.options.getTextBackgroundColor(Int.MIN_VALUE))
-        context.drawBorder(2, 4, this.width - 4, this.height - 8, Color.WHITE.rgb)
-        context.drawText(Ksh.client.textRenderer, prompt, 6, 8, Color.WHITE.rgb, false)
-        this.textField.render(context, mouseX, mouseY, delta)
+        context?.let {
+            it.fill(2, 4, this.width - 2, this.height - 4, textBgColor)
+            it.drawBorder(2, 4, this.width - 4, this.height - 8, Color.WHITE.rgb)
+            it.drawText(Ksh.client.textRenderer, prompt, 6, inputY, Color.WHITE.rgb, true)
+            logs.forEach { log ->
+                it.drawText(Ksh.client.textRenderer, log.first, 6, log.second, Color.WHITE.rgb, true)
+            }
+            this.textField.render(it, mouseX, mouseY, delta)
+        }
         super.render(context, mouseX, mouseY, delta);
     }
 
     override fun setInitialFocus() {
-        this.setInitialFocus(this.textField)
+        super.setInitialFocus(this.textField)
+    }
+
+    fun log(msg: MutableText) {
+        inputY += 8
+        this.textField.y = inputY
+        currentLogY = (inputY - 8) - 1
+        logs.add(msg to currentLogY)
+    }
+
+    fun clearLogs() {
+        logs.clear()
+        inputY = 8
+        this.textField.y = inputY
+        currentLogY = 2
     }
 
 }

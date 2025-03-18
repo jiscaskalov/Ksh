@@ -16,25 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package jsco.dev.ksh
+package jsco.dev.ksh.command.impl
 
-import jsco.dev.ksh.command.CommandManager
-import net.fabricmc.api.ClientModInitializer
-import net.minecraft.client.MinecraftClient
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import jsco.dev.ksh.Ksh
+import jsco.dev.ksh.command.Command
+import jsco.dev.ksh.gui.TerminalScreen
+import net.minecraft.command.CommandSource
 
-class Ksh : ClientModInitializer {
+class ClearCommand : Command("clear") {
 
-    companion object {
-        const val NAME = "Ksh"
-        const val VERSION = "0.0.1a"
-        val logger: Logger = LoggerFactory.getLogger(NAME)
-        val client = MinecraftClient.getInstance()
-    }
-
-    override fun onInitializeClient() {
-        CommandManager.registerCommands()
+    override fun build(builder: LiteralArgumentBuilder<CommandSource>) {
+        builder.executes {
+            (Ksh.client.currentScreen as? TerminalScreen)?.apply { clearLogs() }
+            singleSuccess()
+        }
     }
 
 }
