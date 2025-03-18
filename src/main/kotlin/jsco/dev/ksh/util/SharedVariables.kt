@@ -16,21 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package jsco.dev.ksh
+package jsco.dev.ksh.util
 
-import net.fabricmc.api.ClientModInitializer
-import net.minecraft.client.MinecraftClient
+import java.awt.Color
 
-class Ksh : ClientModInitializer {
-
-    companion object {
-        const val NAME = "Ksh"
-        const val VERSION = "0.0.1a"
-        val client = MinecraftClient.getInstance()
-    }
-
-    override fun onInitializeClient() {
-
-    }
-
+object SharedVariables {
+    val BRAND_BACKGROUND: Color = Color.LIGHT_GRAY
+    val BRAND_COLOR: Color = Color.decode("#ff0078")
 }

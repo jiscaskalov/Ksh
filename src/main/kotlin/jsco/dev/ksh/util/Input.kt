@@ -16,21 +16,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package jsco.dev.ksh
+package jsco.dev.ksh.util
 
-import net.fabricmc.api.ClientModInitializer
-import net.minecraft.client.MinecraftClient
+import org.lwjgl.glfw.GLFW
 
-class Ksh : ClientModInitializer {
+object Input {
 
-    companion object {
-        const val NAME = "Ksh"
-        const val VERSION = "0.0.1a"
-        val client = MinecraftClient.getInstance()
+    private val buttons = BooleanArray(16)
+
+    fun setButtonState(button: Int, pressed: Boolean) {
+        if (button >= 0 && button < buttons.size) buttons[button] = pressed
     }
 
-    override fun onInitializeClient() {
-
+    enum class KeyAction {
+        Press,
+        Repeat,
+        Release;
+        companion object {
+            fun get(action: Int): KeyAction {
+                return when (action) {
+                    GLFW.GLFW_PRESS -> Press
+                    GLFW.GLFW_RELEASE -> Release
+                    else -> Repeat
+                }
+            }
+        }
     }
 
 }
